@@ -13,6 +13,7 @@ app.use(express.json());
 let isConnected = false;
 
 async function connectToMongoDB() {
+    if (isConnected) return;
     try {
         await mongoose.connect(process.env.MONGO_URI, {
             useNewUrlParser: true,
@@ -22,14 +23,17 @@ async function connectToMongoDB() {
         console.log('Connected to MongoDB');
     } catch (error) {
         console.error('Error connecting to MongoDB:', error);
+        throw error;
     }
 }
 
-app.use((req, res, next) => {
-    if (!isConnected) {
-        connectToMongoDB();
+app.use(async (req, res, next) => {
+    try {
+        await connectToMongoDB();
+        next();
+    } catch (error) {
+        res.status(500).json({ message: 'Database connection failed' });
     }
-    next();
 });
 
 // Routes
