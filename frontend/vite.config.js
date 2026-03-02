@@ -8,7 +8,7 @@ export default defineConfig({
         port: 5173,
         proxy: {
             '/api': {
-                target: 'https://reverse-logistics-demo.vercel.app/',
+                target: 'https://reverse-logistics-demo.vercel.app',
                 changeOrigin: true
             }
         }
